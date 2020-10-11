@@ -47,6 +47,9 @@ def retweet():
 
 
 while True:
-    retweet()
-    time.sleep(15)
-    print('Bot is running: Retweeting & liking tweets relating to SARS')
+    try:
+        retweet()
+        print('Bot is running: Retweeting & liking tweets relating to SARS')
+        time.sleep(60)
+    except tweepy.TweepError as e:
+        print(e.reason)
