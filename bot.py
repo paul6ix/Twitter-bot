@@ -1,6 +1,7 @@
 import tweepy
 import os
 from dotenv import load_dotenv
+
 load_dotenv()
 
 consumer_key = os.environ.get("consumer_key")
@@ -22,9 +23,6 @@ def check_saved_tweets(fl):
     return saved_tweet_id
 
 
-result = check_saved_tweets(FILE_NAME)
-
-
 def save_tweet_id(file, ids):
     write_file = open(file, 'w')
     write_file.write(str(ids))
@@ -32,10 +30,12 @@ def save_tweet_id(file, ids):
     return
 
 
-save_tweet_id(FILE_NAME, result)
-
-tweets = api.home_timeline()
-for tweet in tweets:
-    if '#End' in tweet.text:
+tweets = api.mentions_timeline(check_saved_tweets(FILE_NAME), tweet_mode='extended')
+for tweet in reversed(tweets):
+    if '#EndSARS' in tweet.full_text:
         print('New tweet relating to SARS')
-        print(str(tweet.id) + ' -- ' + tweet.text)
+        print(str(tweet.id) + ' -- ' + tweet.full_text)
+        api.update_status(
+            '@' + tweet.user.screen_name + ' Keep Retweeting the Hashtag #EndSARS #EndSarsNow #EndSARSBrutality ',
+            tweet.id)
+        save_tweet_id(FILE_NAME, tweet.id)
