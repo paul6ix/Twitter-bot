@@ -1,5 +1,7 @@
-import tweepy
 import os
+import time
+
+import tweepy
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -30,12 +32,21 @@ def save_tweet_id(file, ids):
     return
 
 
-tweets = api.mentions_timeline(check_saved_tweets(FILE_NAME), tweet_mode='extended')
-for tweet in reversed(tweets):
-    if '#EndSARS' in tweet.full_text:
-        print('New tweet relating to SARS')
-        print(str(tweet.id) + ' -- ' + tweet.full_text)
-        api.update_status(
-            '@' + tweet.user.screen_name + ' Keep Retweeting the Hashtag #EndSARS #EndSarsNow #EndSARSBrutality ',
-            tweet.id)
-        save_tweet_id(FILE_NAME, tweet.id)
+def retweet():
+    tweets = api.home_timeline(check_saved_tweets(FILE_NAME), tweet_mode='extended')
+    for tweet in reversed(tweets):
+        if '#End' in tweet.full_text:
+            print('retweeting tweets relating to SARS')
+            print(str(tweet.id) + ' -- ' + tweet.full_text)
+            # How to reply tweet and retweet
+            # api.update_status(
+            #     '@' + tweet.user.screen_name + ' Keep Retweeting the Hashtag #EndSARS #EndSarsNow #EndSARSBrutality ',
+            #     tweet.id)
+            api.create_favorite(tweet.id)
+            api.retweet(tweet.id)
+            save_tweet_id(FILE_NAME, tweet.id)
+
+
+while True:
+    retweet()
+    time.sleep(15)
