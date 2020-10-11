@@ -13,7 +13,7 @@ access_token_secret = os.environ.get("access_token_secret")
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 
-api = tweepy.API(auth)
+api = tweepy.API(auth, wait_on_rate_limit=True)
 
 FILE_NAME = 'saved_tweets.txt'
 
@@ -36,8 +36,7 @@ def retweet():
     tweets = api.home_timeline(check_saved_tweets(FILE_NAME), tweet_mode='extended')
     for tweet in reversed(tweets):
         if '#End' in tweet.full_text:
-            print('retweeting tweets relating to SARS')
-            print(str(tweet.id) + ' -- ' + tweet.full_text)
+            # print(str(tweet.id) + ' -- ' + tweet.full_text)
             # How to reply tweet and retweet
             # api.update_status(
             #     '@' + tweet.user.screen_name + ' Keep Retweeting the Hashtag #EndSARS #EndSarsNow #EndSARSBrutality ',
@@ -50,3 +49,4 @@ def retweet():
 while True:
     retweet()
     time.sleep(15)
+    print('Bot is running: Retweeting & liking tweets relating to SARS')
